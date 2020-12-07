@@ -1,14 +1,21 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.10)
 project(garden_robot)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
+## Use C++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
-
+find_package(catkin REQUIRED COMPONENTS
+        roscpp
+        std_msgs
+        )
+find_package(Boost REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -99,10 +106,14 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES garden_robot
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  CATKIN_DEPENDS
+    roscpp
+    sensor_msgs
+  DEPENDS
 )
 
 ###########
@@ -112,14 +123,42 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-# ${catkin_INCLUDE_DIRS}
+ include
+ ${catkin_INCLUDE_DIRS}
+ ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/garden_robot.cpp
-# )
+#add_library(${PROJECT_NAME}_core
+#        src/Algorithm.cpp
+#        )
+#target_compile_features(${PROJECT_NAME}_core INTERFACE cxx_std_11)
+
+## Declare cpp executables
+add_executable(${PROJECT_NAME}
+        src/${PROJECT_NAME}_node.cpp
+        )
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
+
+## Add dependencies to exported targets, like ROS msgs or srvs
+#add_dependencies(${PROJECT_NAME}_core
+#        ${catkin_EXPORTED_TARGETS}
+#        )
+
+add_dependencies(${PROJECT_NAME}
+        ${catkin_EXPORTED_TARGETS}
+        )
+
+## Specify libraries to link executable targets against
+#target_link_libraries(${PROJECT_NAME}_core
+#        ${catkin_LIBRARIES}
+#        )
+
+target_link_libraries(${PROJECT_NAME}
+#        ${PROJECT_NAME}_core
+        ${catkin_LIBRARIES}
+        )
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -149,6 +188,27 @@ include_directories(
 #############
 ## Install ##
 #############
+
+
+install(
+        TARGETS ${PROJECT_NAME}
+#                ${PROJECT_NAME}_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(
+        DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        FILES_MATCHING PATTERN "*.hpp"
+)
+
+# Mark other files for installation
+install(
+        DIRECTORY doc
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
@@ -191,6 +251,18 @@ include_directories(
 #############
 ## Testing ##
 #############
+
+if(${CATKIN_ENABLE_TESTING})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+    ## Add gtest based cpp test target and link libraries
+    catkin_add_gtest(${PROJECT_NAME}-test
+            test/test_garden_robot.cpp
+#            test/AlgorithmTest.cpp
+            )
+    target_link_libraries(${PROJECT_NAME}-test
+#            ${PROJECT_NAME}_core
+            )
+endif()
 
 ## Add gtest based cpp test target and link libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_garden_robot.cpp)
