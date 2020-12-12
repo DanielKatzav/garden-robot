@@ -7,7 +7,7 @@
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "garden_robot_node");
+    ros::init(argc, argv, "rosgarden");
     ros::NodeHandle nodeHandle("~");
 
 //    ros_package_template::RosPackageTemplate rosPackageTemplate(nodeHandle);

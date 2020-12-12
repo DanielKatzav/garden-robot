@@ -9,7 +9,7 @@
 
 ros::NodeHandle  nh;
 std_msgs::Int16 waterLvlSensor;
-ros::Publisher water_level_pub("water_level", &waterLvlSensor);
+ros::Publisher water_level_pub("/rosgarden/water_level", &waterLvlSensor);
 
 // Sensor pins
 #define sensorPower 7

@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(catkin REQUIRED COMPONENTS
         roscpp
         std_msgs
+        sensor_msgs
+        std_srvs
         )
 find_package(Boost REQUIRED)
 ## System dependencies are found with CMake's conventions
@@ -137,6 +139,10 @@ include_directories(
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
         src/${PROJECT_NAME}_node.cpp
+        src/Sensor.cpp
+        src/Sensors/WaterFlow.cpp
+        src/Sensors/WaterLevel.cpp
+        src/Sensors/LiquidPH.cpp
         )
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
 
