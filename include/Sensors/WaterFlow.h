@@ -22,9 +22,10 @@ namespace sensor{
         ~WaterFlow(){};
 
     private:
+        int waterLevel = 0;
 
     public:
-
+        int getWaterLevel(){ return waterLevel; };
 
     };
 

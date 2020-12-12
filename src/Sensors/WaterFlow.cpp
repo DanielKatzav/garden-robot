@@ -12,5 +12,7 @@ sensor::WaterFlow::WaterFlow(ros::NodeHandle *nodeHandle)
 
 void sensor::WaterFlow::SensorCallback(const std_msgs::Int16 data) {
 
+    this->waterLevel = data.data;
+
 }
 

@@ -7,7 +7,8 @@
 
 #include "ros/ros.h"
 
-class Sensor{
+
+class Sensor {
 
 protected:
     ros::NodeHandle* nodeHandle_;
@@ -17,10 +18,10 @@ public:
     Sensor(ros::NodeHandle *nodeHandle, ros::Subscriber *sensorSub);
 
     Sensor(){};
-    ~Sensor(){};
+    virtual ~Sensor(){};
 
 protected:
-//    virtual void SensorCallback();
+//    virtual void SensorCallback(T data) const = 0;
 
 public:
 
